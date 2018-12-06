@@ -2,13 +2,13 @@ def verify(request):
 
     request_json = request.get_json(silent=True)
     if request_json \
-        and 'declarationOfGoods' in request_json \
-        and 'documents' in request_json \
-        and 'images' in request_json:
+        and 'goodsDeclaration' in request_json \
+        and 'documentUri' in request_json \
+        and 'imageUri' in request_json:
 
         goods_declaration = request_json['goodsDeclaration']
-        document_image_uri = request_json['documentsUri'][0]
-        goods_image_uri = request_json['imagesUri'][0]
+        document_image_uri = request_json['documentUri']
+        goods_image_uri = request_json['imageUri']
 
         detect_entities(goods_declaration)
         detect_labels(goods_image_uri)
