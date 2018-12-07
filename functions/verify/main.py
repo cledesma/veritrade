@@ -6,7 +6,7 @@ def verify(request):
         and 'ilcId' in content \
         and 'documentUri' in content \
         and 'imageUri' in content:
-        params = json.loads(content)
+        params = json.loads(str(content))
         print("***************** PARAMS **************")
         print(params)
         ilc_id = params["ilcId"]
@@ -20,8 +20,8 @@ def verify(request):
         print(u'{:<16}: {}'.format('IMAGE_URI', goods_image_uri))
         print('=' * 20)
 
-        # ilc_json = query_ilc_gcloud()
-        ilc_json = query_ilc(ilc_id)
+        ilc_json = query_ilc_gcloud()
+        # ilc_json = query_ilc(ilc_id)
         description_of_goods = parse_description_of_goods(ilc_json)[0]
         document_hits = find_hits(detect_entities(description_of_goods),
             detect_document_texts(document_image_uri))
