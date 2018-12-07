@@ -2,17 +2,23 @@ def verify(request):
 
     request_json = request.get_json(silent=True)
     if request_json \
-        and 'goodsDeclaration' in request_json \
+        and 'ilcId' in request_json \
         and 'documentUri' in request_json \
         and 'imageUri' in request_json:
 
-        goods_declaration = request_json['goodsDeclaration']
+        ilc_id = request_json['ilcId']
         document_image_uri = request_json['documentUri']
         goods_image_uri = request_json['imageUri']
 
-        detect_entities(goods_declaration)
-        detect_labels(goods_image_uri)
-        detect_document_texts(document_image_uri)
+        print('\n')
+        print('=' * 20)
+        print(u'{:<16}: {}'.format('ILC ID', ilc_id))
+        print(u'{:<16}: {}'.format('DOC_URI', document_image_uri))
+        print(u'{:<16}: {}'.format('IMAGE_URI', image_uri))
+        print('=' * 20)
+
+        ilc_json = query_ilc(ilc_id)
+        description_of_goods = parse_description_of_goods(ilc_json)
 
 def detect_entities(goods_declaration):
 
@@ -139,3 +145,26 @@ def parse_description_of_goods(ilc_json):
     for line in lines:
         result.append(line)
     return result
+
+def query_ilc_gcloud():
+    import requests 
+    URL = "https://asia-northeast1-veritrade-224415.cloudfunctions.net/trade_innovation"
+    r = requests.get(url = URL) 
+    print("\n")
+    print('=' * 20)
+    print("Query ILC - GCloud")
+    print('=' * 20)
+    print(r.text)
+    return r.text
+
+def query_ilc(ilc_id):
+    import requests 
+    BASE_URL = "http://man-lhs7gr32:8000/tradefinance/api/import-letters-of-credit/"
+    URL = BASE_URL + ilc_id
+    r = requests.get(url = URL) 
+    print("\n")
+    print('=' * 20)
+    print("Query ILC")
+    print('=' * 20)
+    print(r.text)
+    return r.text
