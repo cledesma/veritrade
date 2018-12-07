@@ -6,7 +6,7 @@ def verify(request):
         and 'ilcId' in content \
         and 'documentUri' in content \
         and 'imageUri' in content:
-        params = json.loads(str(content))
+        params = json.loads(str(content).replace("\'", "\""))
         print("***************** PARAMS **************")
         print(params)
         ilc_id = params["ilcId"]
