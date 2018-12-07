@@ -1,28 +1,32 @@
 def verify(request):
-
-    request_json = request.get_json(silent=True)
-    if request_json \
-        and 'ilcId' in request_json \
-        and 'documentUri' in request_json \
-        and 'imageUri' in request_json:
-
-        ilc_id = request_json['ilcId']
-        document_image_uri = request_json['documentUri']
-        goods_image_uri = request_json['imageUri']
+    import json
+    content = request.get_json()
+    print(content)
+    if content \
+        and 'ilcId' in content \
+        and 'documentUri' in content \
+        and 'imageUri' in content:
+        params = json.loads(content)
+        print("***************** PARAMS **************")
+        print(params)
+        ilc_id = params["ilcId"]
+        document_image_uri = params["documentUri"]
+        goods_image_uri = params["imageUri"]
 
         print('\n')
         print('=' * 20)
         print(u'{:<16}: {}'.format('ILC ID', ilc_id))
         print(u'{:<16}: {}'.format('DOC_URI', document_image_uri))
-        print(u'{:<16}: {}'.format('IMAGE_URI', image_uri))
+        print(u'{:<16}: {}'.format('IMAGE_URI', goods_image_uri))
         print('=' * 20)
 
+        # ilc_json = query_ilc_gcloud()
         ilc_json = query_ilc(ilc_id)
-        description_of_goods = parse_description_of_goods(ilc_json)
-        document_hits = find_hits(main.detect_entities(description_of_goods),
-            main.detect_document_texts(document_image_uri))
-        image_hits = find_hits(main.detect_entities(description_of_goods),
-            main.detect_labels(goods_image_uri))
+        description_of_goods = parse_description_of_goods(ilc_json)[0]
+        document_hits = find_hits(detect_entities(description_of_goods),
+            detect_document_texts(document_image_uri))
+        image_hits = find_hits(detect_entities(description_of_goods),
+            detect_labels(goods_image_uri))
         response = build_response(ilc_id, description_of_goods, document_hits, image_hits)
         return response
     else:
@@ -51,8 +55,6 @@ def build_response(ilc_id, description_of_goods, document_hits, image_hits):
     print('=' * 20)
     print(json_string)
     return json_string
-
-
 
 def detect_entities(goods_declaration):
 

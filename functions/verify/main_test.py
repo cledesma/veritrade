@@ -1,6 +1,19 @@
+from unittest.mock import Mock
 import main
 
 ########### Integration Tests #############
+
+def test_verify():
+    import json
+    data = """
+    {
+        "ilcId": "227ab442-398b-4d73-abf2-cc438761d8f8",
+        "documentUri": "gs://veritrade/original_bill_of_loading.jpg",
+        "imageUri": "gs://veritrade/lubricants.jpg"
+    }
+    """
+    req = Mock(get_json=Mock(return_value=data))
+    main.verify(req)
 
 def test_verify_doc_image():
     hits = main.find_hits(
@@ -28,7 +41,7 @@ def test_query_ilc():
     description_of_goods = main.parse_description_of_goods(ilc_json)
     assert description_of_goods[0] == "10 bottles of lubricants"
 
-########### Unit Tests #############
+########## Unit Tests #############
 
 def test_build_response():
 
