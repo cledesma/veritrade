@@ -25,8 +25,9 @@ def verify(request):
             main.detect_labels(goods_image_uri))
         response = build_response(ilc_id, description_of_goods, document_hits, image_hits)
         return response
+    else:
+        return "Check your parameters"
         
-
 def build_response(ilc_id, description_of_goods, document_hits, image_hits):
 
     import json
