@@ -1,5 +1,7 @@
 import main
 
+########### Integration Tests #############
+
 # def test_verify_doc_image():
 #     hits = main.find_hits(
 #         main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg'), 
@@ -18,6 +20,30 @@ import main
 #         main.detect_labels('gs://veritrade/lubricants.jpg'))
 #     assert len(hits) > 0
 
+# def test_query_ilc_gcloud():
+#     main.query_ilc_gcloud()
+
+# def test_query_ilc():
+#     ilc_json = main.query_ilc('227ab442-398b-4d73-abf2-cc438761d8f8')
+#     description_of_goods = main.parse_description_of_goods(ilc_json)
+#     assert description_of_goods[0] == "10 bottles of lubricants"
+
+########### Unit Tests #############
+
+def test_build_response():
+
+    import json
+    ilc_id = '227ab442-398b-4d73-abf2-cc438761d8f8'
+    description_of_goods = '10 bottles of lubricants'
+    document_hits = ['oil', 'lubricants']
+    image_hits = []
+    json_string = main.build_response(ilc_id, description_of_goods, document_hits, image_hits)
+    dic = json.loads(json_string)
+    assert dic["descriptionOfGoods"] == '10 bottles of lubricants'
+    assert dic["ilcId"] == '227ab442-398b-4d73-abf2-cc438761d8f8'
+    assert dic["imageVerified"] == False
+    assert dic["documentVerified"] == True
+
 def test_the_longer_keyword():
     assert main.the_longer_keyword("lubr", "lubricant") == "lubricant"
     assert main.the_longer_keyword("them", "the") == "them"
@@ -29,18 +55,6 @@ def test_is_match():
     assert main.is_match('lubr', 'lubricant') == True
     assert main.is_match('them', 'the') == True
     assert main.is_match('th', 'thermos') == False
-
-# def test_detect_entities():
-    # entities = main.detect_entities("20 bags of horse manure")
-
-# def test_detect_labels():
-#     main.detect_labels('gs://veritrade/lubricants.jpg')
-
-# def test_detect_image_texts():
-#     main.detect_image_texts('gs://veritrade/Bill-of-Lading.jpg')
-
-# def test_detect_document_texts():
-#     document_keywords = main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg')
     
 def test_parse_description_of_goods():
     ilc_json = """
@@ -77,13 +91,5 @@ def test_parse_description_of_goods():
         "bankInstructions": null
     }
     """
-    description_of_goods = main.parse_description_of_goods(ilc_json)
-    assert description_of_goods[0] == "10 bottles of lubricants"
-
-def test_query_ilc_gcloud():
-    main.query_ilc_gcloud()
-
-def test_query_ilc():
-    ilc_json = main.query_ilc('227ab442-398b-4d73-abf2-cc438761d8f8')
     description_of_goods = main.parse_description_of_goods(ilc_json)
     assert description_of_goods[0] == "10 bottles of lubricants"

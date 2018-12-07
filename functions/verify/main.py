@@ -19,6 +19,39 @@ def verify(request):
 
         ilc_json = query_ilc(ilc_id)
         description_of_goods = parse_description_of_goods(ilc_json)
+        document_hits = find_hits(main.detect_entities(description_of_goods),
+            main.detect_document_texts(document_image_uri))
+        image_hits = find_hits(main.detect_entities(description_of_goods),
+            main.detect_labels(goods_image_uri))
+        response = build_response(ilc_id, description_of_goods, document_hits, image_hits)
+        return response
+        
+
+def build_response(ilc_id, description_of_goods, document_hits, image_hits):
+
+    import json
+    document_verified = False
+    image_verified = False
+    if len(document_hits) != 0:
+        document_verified = True
+    if len(image_hits) !=0:
+        image_verified = True
+    dic = {
+        'ilcId': ilc_id,
+        'descriptionOfGoods': description_of_goods,
+        'documentVerified': document_verified, 
+        'imageVerified': image_verified,
+        'documentHits': document_hits,
+        'imageHits': image_hits}
+    json_string = json.dumps(dic)
+    print('\n')
+    print('=' * 20)
+    print("Build Response")
+    print('=' * 20)
+    print(json_string)
+    return json_string
+
+
 
 def detect_entities(goods_declaration):
 
