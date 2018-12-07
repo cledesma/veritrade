@@ -1,22 +1,22 @@
 import main
 
-def test_verify_doc_image():
-    hits = main.find_hits(
-        main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg'), 
-        main.detect_labels('gs://veritrade/lubricants.jpg'))
-    assert len(hits) > 0
+# def test_verify_doc_image():
+#     hits = main.find_hits(
+#         main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg'), 
+#         main.detect_labels('gs://veritrade/lubricants.jpg'))
+#     assert len(hits) > 0
 
-def test_verify_goods_doc():
-    hits = main.find_hits(
-        main.detect_entities('10 bottles of lubricants'),
-        main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg'))
-    assert len(hits) > 0
+# def test_verify_goods_doc():
+#     hits = main.find_hits(
+#         main.detect_entities('10 bottles of lubricants'),
+#         main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg'))
+#     assert len(hits) > 0
 
-def test_verify_goods_image():
-    hits = main.find_hits(
-        main.detect_entities('10 bottles of lubricants'),
-        main.detect_labels('gs://veritrade/lubricants.jpg'))
-    assert len(hits) > 0
+# def test_verify_goods_image():
+#     hits = main.find_hits(
+#         main.detect_entities('10 bottles of lubricants'),
+#         main.detect_labels('gs://veritrade/lubricants.jpg'))
+#     assert len(hits) > 0
 
 def test_the_longer_keyword():
     assert main.the_longer_keyword("lubr", "lubricant") == "lubricant"
@@ -42,3 +42,40 @@ def test_is_match():
 # def test_detect_document_texts():
 #     document_keywords = main.detect_document_texts('gs://veritrade/original_bill_of_loading.jpg')
     
+def test_parse_description_of_goods():
+    ilc_json = """
+    {
+        "id": "227ab442-398b-4d73-abf2-cc438761d8f8",
+        "customerId": "AAAA0011",
+        "inputBranch": null,
+        "inBehalfOfBranch": null,
+        "beneficiary": null,
+        "amountAndConfirmationDetails": null,
+        "paymentDetails": null,
+        "shipmentDetails": null,
+        "issuingBankName": "HSBC",
+        "issuingReference": null,
+        "advisingBank": {
+            "name": "Bank of Ireland",
+            "address": "40 Mespil Road, Dublin 4",
+            "BIC": "BOFIIE2D"
+        },
+        "adviseThruBank": null,
+        "narrativeDetails": {
+            "descriptionOfGoods": {
+                "lines": ["10 bottles of lubricants"]
+            },
+            "documentsRequired": null,
+            "additionalInstructions": null,
+            "specialPaymentConditionsForBeneficiary": null
+        },
+        "presentationDays": null,
+        "presentationDaysNarrative": null,
+        "requestedConfirmationPartyId": null,
+        "shipmentPeriod": null,
+        "additionalAmount": null,
+        "bankInstructions": null
+    }
+    """
+    description_of_goods = main.parse_description_of_goods(ilc_json)
+    assert description_of_goods[0] == "10 bottles of lubricants"

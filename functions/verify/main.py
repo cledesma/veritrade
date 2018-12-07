@@ -128,3 +128,14 @@ def the_longer_keyword(w1, w2):
         return w1
     else:
         return w2
+
+def parse_description_of_goods(ilc_json):
+    import json
+    data = json.loads(ilc_json)
+    narrative_details = data["narrativeDetails"]
+    description_of_goods = narrative_details["descriptionOfGoods"]
+    lines = description_of_goods["lines"]
+    result = []
+    for line in lines:
+        result.append(line)
+    return result
